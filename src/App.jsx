@@ -2,7 +2,6 @@ import Header from "./components/Header";
 import { Result } from "./components/Result";
 import { UserInput } from "./components/UserInput";
 import { useState } from "react";
-import { calculateInvestmentResults } from "./util/investment";
 
 const USER_INPUT_LABEL = [
   "Initial Investment",
@@ -13,54 +12,61 @@ const USER_INPUT_LABEL = [
 
 function App() {
   const [userInput, setUserInput] = useState({
-    initialInvestment: 0,
-    annualInvestment: 0,
-    expectedreturn: 0,
-    duration: 0,
-  })
-  const [calculatedResult, setCalculatedResult] = useState([]);
+    initialInvestment: 10000,
+    annualInvestment: 300,
+    expectedReturn: 5.5,
+    duration: 12,
+  });
 
-  function handleChange(event, id) {
-    const value = parseFloat(event.target.value)
+  const inputIsValid = userInput.duration >= 1;
+
+  function handleChange(value, id) {
+    const newValue = parseFloat(value);
     setUserInput((prev) => ({
       ...prev,
-      [id]: value,
-    }))
+      [id]: newValue,
+    }));
   }
 
-  const result = calculateInvestmentResults(userInput);
-  setCalculatedResult(result);
 
   return (
     <>
       <Header />
-      <div id="user-input">
+      <section id="user-input">
         <div className="input-group">
           <UserInput
             label={USER_INPUT_LABEL[0]}
             id="initialInvestment"
-            onHandleChange={handleChange}
+            onChange={handleChange}
+            value={userInput.initialInvestment}
           />
           <UserInput
             label={USER_INPUT_LABEL[1]}
             id="annualInvestment"
-            onHandleChange={handleChange}
+            onChange={handleChange}
+            value={userInput.annualInvestment}
           />
         </div>
         <div className="input-group">
           <UserInput
             label={USER_INPUT_LABEL[2]}
             id="expectedReturn"
-            onHandleChange={handleChange}
+            onChange={handleChange}
+            value={userInput.expectedReturn}
           />
           <UserInput
             label={USER_INPUT_LABEL[3]}
             id="duration"
-            onHandleChange={handleChange}
+            onChange={handleChange}
+            value={userInput.duration}
           />
         </div>
-      </div>
-      <Result />
+      </section>
+      {inputIsValid ? (
+        <Result input={userInput} />
+      ) : (
+        <p className="center">Please enter a duration more tha zero.</p>
+      )}
     </>
   );
 }
